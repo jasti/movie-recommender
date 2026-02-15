@@ -4,7 +4,7 @@ A semantic search engine that recommends the 3 most similar movies to any film â
 
 Given a movie, the system encodes its plot, genre, cast, director, and keywords into a single embedding vector, then uses cosine similarity to find the nearest neighbors in ~1ms.
 
-**Live demo:** [your-app.streamlit.app](https://your-app.streamlit.app)
+**Live demo:** [https://movie-recommender-991.streamlit.app/](https://movie-recommender-991.streamlit.app/)
 
 ## How it works
 
