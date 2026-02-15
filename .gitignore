@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+venv/
+.env
+
+# Keep the generated index files (they're needed for deployment)
+# If you want to regenerate: python precompute.py
+# !data/faiss_index.bin
+# !data/movies_meta.pkl
