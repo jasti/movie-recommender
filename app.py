@@ -17,6 +17,7 @@ from pathlib import Path
 DATA_DIR = Path(__file__).parent / "data"
 TOP_K = 3
 TMDB_IMG_BASE = "https://image.tmdb.org/t/p/w300"
+MIN_RATING = 7.0  # Minimum vote_average to recommend
 
 
 # ── Load Resources (cached across reruns) ─────────────────────────────
@@ -43,13 +44,28 @@ def load_metadata():
 
 def find_similar(movie_idx: int, top_k: int = TOP_K):
     index = load_index()
+    meta = load_metadata()
     query_vec = index.reconstruct(int(movie_idx)).reshape(1, -1)
-    distances, indices = index.search(query_vec, top_k + 1)
+
+    # Fetch more candidates to ensure we have enough after filtering
+    search_k = min(50, len(meta))
+    distances, indices = index.search(query_vec, search_k)
+
     results = []
     for dist, idx in zip(distances[0], indices[0]):
         if idx == movie_idx:
             continue
-        results.append((int(idx), float(dist)))
+
+        # Filter by minimum rating
+        movie = meta.iloc[idx]
+        rating = movie.get("vote_average", 0)
+        if pd.notna(rating) and rating >= MIN_RATING:
+            results.append((int(idx), float(dist)))
+
+        # Stop once we have enough highly rated recommendations
+        if len(results) >= top_k:
+            break
+
     return results[:top_k]
 
 
